@@ -258,6 +258,8 @@
             text-align: center;
             user-select: none;
             transition: transform 0.2s, opacity 0.2s;
+            z-index: 10;
+            position: relative;
         }
 
         .drag-item:hover {
@@ -268,6 +270,9 @@
         .drag-item.dragging {
             opacity: 0.5;
             transform: scale(0.95);
+            z-index: 1000;
+            position: fixed;
+            pointer-events: none;
         }
 
         .number-line {
@@ -351,6 +356,8 @@
             margin-top: 10px;
             font-family: 'Open Sans', sans-serif;
             transition: background-color 0.2s, transform 0.1s;
+            position: relative;
+            z-index: 5;
         }
 
         .answer-toggle:hover {
@@ -397,6 +404,8 @@
             font-family: 'Open Sans', sans-serif;
             font-weight: 600;
             transition: background-color 0.2s;
+            position: relative;
+            z-index: 5;
         }
 
         .nav-btn:hover:not(:disabled) {
@@ -536,6 +545,8 @@
             font-size: 14px;
             transition: all 0.3s;
             box-shadow: 0 2px 8px var(--shadow-color);
+            position: relative;
+            z-index: 1001;
         }
 
         #themeToggle:hover {
@@ -583,6 +594,15 @@
         .nav-btn:focus, .answer-toggle:focus, input:focus, select:focus, textarea:focus, .clear-all-btn:focus, #themeToggle:focus {
             outline: 3px solid var(--primary-color);
             outline-offset: 2px;
+        }
+
+        /* Dragging ghost element */
+        .drag-ghost {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            opacity: 0.8;
+            transform: translate(-50%, -50%);
         }
 
         /* Responsive Design */
@@ -964,16 +984,15 @@
             <div class="drag-drop-container">
                 <div class="drag-source">
                     <p><strong>Drag the correct integer to match each situation:</strong></p>
-                    <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-value="-50">Loss of ₹50</div>
-                    <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-value="+100">Gain of ₹100</div>
-                    <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-value="0">No change</div>
-                    <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-value="-200">Withdrawal of ₹200</div>
+                    <div class="drag-item" draggable="true" data-value="-50">Loss of ₹50</div>
+                    <div class="drag-item" draggable="true" data-value="+100">Gain of ₹100</div>
+                    <div class="drag-item" draggable="true" data-value="0">No change</div>
+                    <div class="drag-item" draggable="true" data-value="-200">Withdrawal of ₹200</div>
                 </div>
                 
-                <div class="drop-target" ondragover="allowDrop(event)" ondrop="drop(event)">
+                <div class="drop-target">
                     <p><strong>Drop zone:</strong> Match integers to situations</p>
                     <div id="dropResults" style="min-height: 100px;"></div>
-                    <!-- Clear All button will be added here by JavaScript -->
                 </div>
             </div>
             
@@ -1241,17 +1260,16 @@
                 <div class="drag-drop-container">
                     <div class="drag-source">
                         <p><strong>Integers:</strong></p>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-match="+9">-9</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-match="-5">+5</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-match="0">0</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-match="+12">-12</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-match="-3">+3</div>
+                        <div class="drag-item" draggable="true" data-match="+9">-9</div>
+                        <div class="drag-item" draggable="true" data-match="-5">+5</div>
+                        <div class="drag-item" draggable="true" data-match="0">0</div>
+                        <div class="drag-item" draggable="true" data-match="+12">-12</div>
+                        <div class="drag-item" draggable="true" data-match="-3">+3</div>
                     </div>
                     
-                    <div class="drop-target" ondragover="allowDrop(event)" ondrop="dropMatch(event)" id="matchDropZone">
+                    <div class="drop-target" id="matchDropZone">
                         <p><strong>Drop Opposites Here:</strong></p>
                         <div id="matchResults" style="min-height: 100px;"></div>
-                        <!-- Clear All button will be added here by JavaScript -->
                     </div>
                 </div>
                 
@@ -1329,12 +1347,12 @@
                 
                 <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
                     <div style="text-align: center;">
-                        <div class="number-point" id="pointA" style="background-color: var(--danger-color);" draggable="true" ondragstart="dragPoint(event)"></div>
+                        <div class="number-point" id="pointA" style="background-color: var(--danger-color);" draggable="true"></div>
                         <div>Point A: <span id="pointAValue">-5</span></div>
                         <input type="range" min="-10" max="10" value="-5" class="slider" id="sliderA" oninput="updatePoint('A', this.value)" style="width: 150px;">
                     </div>
                     <div style="text-align: center;">
-                        <div class="number-point" id="pointB" style="background-color: var(--primary-color);" draggable="true" ondragstart="dragPoint(event)"></div>
+                        <div class="number-point" id="pointB" style="background-color: var(--primary-color);" draggable="true"></div>
                         <div>Point B: <span id="pointBValue">3</span></div>
                         <input type="range" min="-10" max="10" value="3" class="slider" id="sliderB" oninput="updatePoint('B', this.value)" style="width: 150px;">
                     </div>
@@ -1452,12 +1470,12 @@
                 
                 <div style="display: flex; justify-content: space-between; padding: 20px; background-color: color-mix(in srgb, var(--primary-color) 5%, transparent); border-radius: 8px; margin: 20px 0;">
                     <div id="orderSource" style="display: flex; flex-wrap: wrap; gap: 10px; min-height: 80px; width: 100%;">
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-value="-8">-8</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-value="2">2</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-value="-3">-3</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-value="0">0</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-value="5">5</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-value="-1">-1</div>
+                        <div class="drag-item" draggable="true" data-value="-8">-8</div>
+                        <div class="drag-item" draggable="true" data-value="2">2</div>
+                        <div class="drag-item" draggable="true" data-value="-3">-3</div>
+                        <div class="drag-item" draggable="true" data-value="0">0</div>
+                        <div class="drag-item" draggable="true" data-value="5">5</div>
+                        <div class="drag-item" draggable="true" data-value="-1">-1</div>
                     </div>
                 </div>
                 
@@ -1672,16 +1690,15 @@
                 <div class="drag-drop-container">
                     <div class="drag-source">
                         <p><strong>Situations:</strong></p>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-match="|5|">5°C above freezing</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-match="|-200|">₹200 debt</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-match="|15-(-10)|">Temperature change from -10°C to 15°C</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-match="|0-(-3)|">Moving from basement (floor -3) to ground floor</div>
+                        <div class="drag-item" draggable="true" data-match="|5|">5°C above freezing</div>
+                        <div class="drag-item" draggable="true" data-match="|-200|">₹200 debt</div>
+                        <div class="drag-item" draggable="true" data-match="|15-(-10)|">Temperature change from -10°C to 15°C</div>
+                        <div class="drag-item" draggable="true" data-match="|0-(-3)|">Moving from basement (floor -3) to ground floor</div>
                     </div>
                     
-                    <div class="drop-target" ondragover="allowDrop(event)" ondrop="dropMatchAbs(event)" id="absDropZone">
+                    <div class="drop-target" id="absDropZone">
                         <p><strong>Match with Absolute Value:</strong></p>
                         <div id="absMatchResults" style="min-height: 100px;"></div>
-                        <!-- Clear All button will be added here by JavaScript -->
                     </div>
                 </div>
                 
@@ -2382,20 +2399,19 @@
                 <div style="display: flex; justify-content: space-between; margin: 20px 0;">
                     <div class="drag-source" style="width: 50%;">
                         <p><strong>Key Concepts:</strong></p>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-concept="integers">Integers: {..., -2, -1, 0, 1, 2, ...}</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-concept="opposites">Opposites: a + (-a) = 0</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-concept="absolute">|a| = distance from 0</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-concept="addition">Addition rules</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-concept="subtraction">a - b = a + (-b)</div>
-                        <div class="drag-item" draggable="true" ondragstart="dragStart(event)" data-concept="properties">Properties of operations</div>
+                        <div class="drag-item" draggable="true" data-concept="integers">Integers: {..., -2, -1, 0, 1, 2, ...}</div>
+                        <div class="drag-item" draggable="true" data-concept="opposites">Opposites: a + (-a) = 0</div>
+                        <div class="drag-item" draggable="true" data-concept="absolute">|a| = distance from 0</div>
+                        <div class="drag-item" draggable="true" data-concept="addition">Addition rules</div>
+                        <div class="drag-item" draggable="true" data-concept="subtraction">a - b = a + (-b)</div>
+                        <div class="drag-item" draggable="true" data-concept="properties">Properties of operations</div>
                     </div>
                     
                     <div class="drop-target" style="width: 45%;">
                         <p><strong>My Summary Sheet:</strong></p>
-                        <div id="summarySheet" style="min-height: 00px; padding: 00px; border: 0px dashed var(--primary-color);">
+                        <div id="summarySheet" style="min-height: 200px; padding: 15px; border: 2px dashed var(--primary-color);">
                             <!-- Concepts will be added here -->
                         </div>
-                        <!-- Clear All button will be added here by JavaScript -->
                     </div>
                 </div>
                 
@@ -2977,7 +2993,7 @@
             
             <div class="interactive-box">
                 <p><strong>Journal Prompt:</strong> Imagine explaining integers to a 10-year-old. What analogies would you use? Write your teaching plan below.</p>
-                <textarea id="reflection" rows="5" style="width: 100%; padding: 15px; font-family: 'Open Sans', sans-serif; margin-top: 15px;" placeholder="Write your reflection here..."></textarea>
+                <textarea id="reflection" rows="5" style="width: 100%; padding: 15px; font-family: 'Open Sans', sans-serif;" placeholder="Write your reflection here..."></textarea>
                 <button class="answer-toggle" onclick="saveReflection()" style="margin-top: 15px;">Save Reflection</button>
                 <div id="reflectionSaved" class="hidden-answer">
                     <p style="color: var(--success-color);">✓ Reflection saved! Great thinking about how to teach these concepts.</p>
@@ -3024,6 +3040,7 @@
         let objectiveRatings = [0, 0, 0, 0, 0, 0, 0, 0];
         let subGameScore = 0;
         let scrollTimeout;
+        let dragGhost = null;
         
         // ========== INITIALIZATION ==========
         document.addEventListener('DOMContentLoaded', function() {
@@ -3056,6 +3073,10 @@
             if (window.MathJax && MathJax.typeset) {
                 setTimeout(() => MathJax.typesetPromise(), 500);
             }
+            
+            // Add global drag end listener
+            document.addEventListener('dragend', handleDragEnd);
+            document.addEventListener('dragover', handleDragOver);
         }
         
         // ========== THEME MANAGEMENT ==========
@@ -3210,18 +3231,22 @@
             }
         }
         
-        // ========== DRAG AND DROP SYSTEM ==========
+        // ========== IMPROVED DRAG AND DROP SYSTEM ==========
         function initializeDragDrop() {
-            // Setup all drag sources
-            document.querySelectorAll('.drag-source .drag-item').forEach(item => {
-                item.addEventListener('dragstart', dragStart);
-                item.setAttribute('draggable', 'true');
+            // Remove old inline event handlers
+            document.querySelectorAll('.drag-item').forEach(item => {
+                item.removeAttribute('ondragstart');
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('touchstart', handleTouchStart, { passive: false });
             });
             
-            // Setup all drop targets
             document.querySelectorAll('.drop-target').forEach(target => {
-                target.addEventListener('dragover', allowDrop);
+                target.removeAttribute('ondragover');
+                target.removeAttribute('ondrop');
+                target.addEventListener('dragover', handleDragOver);
                 target.addEventListener('drop', handleDrop);
+                target.addEventListener('touchmove', handleTouchMove, { passive: false });
+                target.addEventListener('touchend', handleTouchEnd);
                 addClearAllButton(target);
             });
             
@@ -3229,29 +3254,202 @@
             setupOrderingActivity();
         }
         
-        function dragStart(event) {
-            draggedElement = event.target;
-            event.target.classList.add('dragging');
-            event.dataTransfer.setData('text/plain', event.target.textContent);
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            draggedElement.classList.add('dragging');
+            
+            // Create a ghost element for better visual feedback
+            createDragGhost(e.target);
+            
+            // Set data for the drag operation
+            e.dataTransfer.setData('text/plain', e.target.textContent);
+            e.dataTransfer.effectAllowed = 'move';
+            
+            // Store the original parent and position
+            draggedElement.originalParent = draggedElement.parentNode;
+            draggedElement.originalNextSibling = draggedElement.nextSibling;
+            
+            // Hide the original element while dragging
+            draggedElement.style.opacity = '0.4';
         }
         
-        function allowDrop(event) {
-            event.preventDefault();
-        }
-        
-        // General drop handler for most activities
-        function handleDrop(event) {
-            event.preventDefault();
-            if (draggedElement) {
-                const dropZone = event.target.classList.contains('drop-target') ? 
-                    event.target : event.target.closest('.drop-target');
+        function handleTouchStart(e) {
+            if (e.target.classList.contains('drag-item')) {
+                e.preventDefault();
+                draggedElement = e.target;
+                draggedElement.classList.add('dragging');
                 
-                if (dropZone) {
+                // Create a ghost element for touch
+                createDragGhost(e.target);
+                
+                // Store touch position
+                const touch = e.touches[0];
+                draggedElement.touchStartX = touch.clientX;
+                draggedElement.touchStartY = touch.clientY;
+                
+                // Store the original parent and position
+                draggedElement.originalParent = draggedElement.parentNode;
+                draggedElement.originalNextSibling = draggedElement.nextSibling;
+                
+                // Hide the original element while dragging
+                draggedElement.style.opacity = '0.4';
+            }
+        }
+        
+        function createDragGhost(element) {
+            if (dragGhost) {
+                document.body.removeChild(dragGhost);
+            }
+            
+            dragGhost = element.cloneNode(true);
+            dragGhost.classList.add('drag-ghost');
+            dragGhost.style.width = element.offsetWidth + 'px';
+            dragGhost.style.height = element.offsetHeight + 'px';
+            dragGhost.style.backgroundColor = getComputedStyle(element).backgroundColor;
+            dragGhost.style.color = getComputedStyle(element).color;
+            dragGhost.style.borderRadius = getComputedStyle(element).borderRadius;
+            dragGhost.style.padding = getComputedStyle(element).padding;
+            dragGhost.textContent = element.textContent;
+            dragGhost.style.display = 'none'; // Start hidden
+            
+            document.body.appendChild(dragGhost);
+        }
+        
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            // Show ghost at cursor position
+            if (dragGhost) {
+                dragGhost.style.display = 'block';
+                dragGhost.style.left = e.clientX + 'px';
+                dragGhost.style.top = e.clientY + 'px';
+            }
+            
+            // Highlight drop target
+            const dropTarget = e.target.classList.contains('drop-target') ? 
+                e.target : e.target.closest('.drop-target');
+            
+            if (dropTarget) {
+                dropTarget.style.borderColor = 'var(--success-color)';
+                dropTarget.style.backgroundColor = 'color-mix(in srgb, var(--success-color) 10%, transparent)';
+            }
+        }
+        
+        function handleTouchMove(e) {
+            if (draggedElement) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                
+                // Show ghost at touch position
+                if (dragGhost) {
+                    dragGhost.style.display = 'block';
+                    dragGhost.style.left = touch.clientX + 'px';
+                    dragGhost.style.top = touch.clientY + 'px';
+                }
+                
+                // Find drop target under touch
+                const elementsUnderTouch = document.elementsFromPoint(touch.clientX, touch.clientY);
+                const dropTarget = elementsUnderTouch.find(el => el.classList.contains('drop-target'));
+                
+                if (dropTarget) {
+                    dropTarget.style.borderColor = 'var(--success-color)';
+                    dropTarget.style.backgroundColor = 'color-mix(in srgb, var(--success-color) 10%, transparent)';
+                }
+            }
+        }
+        
+        function handleDrop(e) {
+            e.preventDefault();
+            
+            // Remove ghost
+            if (dragGhost) {
+                dragGhost.style.display = 'none';
+            }
+            
+            // Reset drop target styling
+            const dropTarget = e.target.classList.contains('drop-target') ? 
+                e.target : e.target.closest('.drop-target');
+                
+            if (dropTarget) {
+                dropTarget.style.borderColor = '';
+                dropTarget.style.backgroundColor = '';
+            }
+            
+            if (draggedElement) {
+                // Create a new item for the drop zone
+                const newItem = document.createElement('div');
+                newItem.className = 'drag-item';
+                newItem.textContent = draggedElement.textContent;
+                newItem.style.cssText = 'background-color: var(--success-color); margin: 5px 0;';
+                newItem.setAttribute('draggable', 'true');
+                newItem.addEventListener('dragstart', handleDragStart);
+                newItem.addEventListener('touchstart', handleTouchStart, { passive: false });
+                
+                // Copy data attributes
+                if (draggedElement.dataset.value) {
+                    newItem.dataset.value = draggedElement.dataset.value;
+                }
+                if (draggedElement.dataset.match) {
+                    newItem.dataset.match = draggedElement.dataset.match;
+                }
+                if (draggedElement.dataset.concept) {
+                    newItem.dataset.concept = draggedElement.dataset.concept;
+                }
+                
+                // Insert into drop zone
+                if (dropTarget) {
+                    // Check if there's a Clear All button to insert before it
+                    const clearBtn = dropTarget.querySelector('.clear-all-btn');
+                    if (clearBtn) {
+                        dropTarget.insertBefore(newItem, clearBtn);
+                    } else {
+                        dropTarget.appendChild(newItem);
+                    }
+                    
+                    // Animation
+                    newItem.style.transform = 'scale(0)';
+                    setTimeout(() => {
+                        newItem.style.transform = 'scale(1)';
+                        newItem.style.transition = 'transform 0.2s';
+                    }, 10);
+                }
+                
+                // Reset dragged element
+                draggedElement.classList.remove('dragging');
+                draggedElement.style.opacity = '';
+                draggedElement = null;
+            }
+        }
+        
+        function handleTouchEnd(e) {
+            if (draggedElement) {
+                e.preventDefault();
+                
+                // Remove ghost
+                if (dragGhost) {
+                    dragGhost.style.display = 'none';
+                }
+                
+                const touch = e.changedTouches[0];
+                const elementsUnderTouch = document.elementsFromPoint(touch.clientX, touch.clientY);
+                const dropTarget = elementsUnderTouch.find(el => el.classList.contains('drop-target'));
+                
+                // Reset all drop targets
+                document.querySelectorAll('.drop-target').forEach(target => {
+                    target.style.borderColor = '';
+                    target.style.backgroundColor = '';
+                });
+                
+                if (dropTarget && draggedElement) {
                     // Create a new item for the drop zone
                     const newItem = document.createElement('div');
                     newItem.className = 'drag-item';
                     newItem.textContent = draggedElement.textContent;
                     newItem.style.cssText = 'background-color: var(--success-color); margin: 5px 0;';
+                    newItem.setAttribute('draggable', 'true');
+                    newItem.addEventListener('dragstart', handleDragStart);
+                    newItem.addEventListener('touchstart', handleTouchStart, { passive: false });
                     
                     // Copy data attributes
                     if (draggedElement.dataset.value) {
@@ -3264,15 +3462,15 @@
                         newItem.dataset.concept = draggedElement.dataset.concept;
                     }
                     
-                    // Insert before the Clear All button
-                    const clearBtn = dropZone.querySelector('.clear-all-btn');
+                    // Insert into drop zone
+                    const clearBtn = dropTarget.querySelector('.clear-all-btn');
                     if (clearBtn) {
-                        dropZone.insertBefore(newItem, clearBtn);
+                        dropTarget.insertBefore(newItem, clearBtn);
                     } else {
-                        dropZone.appendChild(newItem);
+                        dropTarget.appendChild(newItem);
                     }
                     
-                    // Visual feedback
+                    // Animation
                     newItem.style.transform = 'scale(0)';
                     setTimeout(() => {
                         newItem.style.transform = 'scale(1)';
@@ -3280,7 +3478,28 @@
                     }, 10);
                 }
                 
+                // Reset dragged element
                 draggedElement.classList.remove('dragging');
+                draggedElement.style.opacity = '';
+                draggedElement = null;
+            }
+        }
+        
+        function handleDragEnd(e) {
+            // Remove ghost
+            if (dragGhost) {
+                dragGhost.style.display = 'none';
+            }
+            
+            // Reset all drop targets
+            document.querySelectorAll('.drop-target').forEach(target => {
+                target.style.borderColor = '';
+                target.style.backgroundColor = '';
+            });
+            
+            if (draggedElement) {
+                draggedElement.classList.remove('dragging');
+                draggedElement.style.opacity = '';
                 draggedElement = null;
             }
         }
@@ -3297,6 +3516,9 @@
                     newItem.className = 'drag-item';
                     newItem.textContent = draggedElement.textContent;
                     newItem.style.cssText = 'background-color: var(--success-color); margin: 5px 0;';
+                    newItem.setAttribute('draggable', 'true');
+                    newItem.addEventListener('dragstart', handleDragStart);
+                    newItem.addEventListener('touchstart', handleTouchStart, { passive: false });
                     
                     // Copy the data-match attribute
                     if (draggedElement.dataset.match) {
@@ -3317,6 +3539,7 @@
                 }
                 
                 draggedElement.classList.remove('dragging');
+                draggedElement.style.opacity = '';
                 draggedElement = null;
             }
         }
@@ -3333,6 +3556,9 @@
                     newItem.className = 'drag-item';
                     newItem.textContent = draggedElement.textContent;
                     newItem.style.cssText = 'background-color: var(--success-color); margin: 5px 0;';
+                    newItem.setAttribute('draggable', 'true');
+                    newItem.addEventListener('dragstart', handleDragStart);
+                    newItem.addEventListener('touchstart', handleTouchStart, { passive: false });
                     
                     // Copy the data-match attribute
                     if (draggedElement.dataset.match) {
@@ -3353,6 +3579,7 @@
                 }
                 
                 draggedElement.classList.remove('dragging');
+                draggedElement.style.opacity = '';
                 draggedElement = null;
             }
         }
@@ -3370,6 +3597,11 @@
                     clearAllItems(dropZone);
                 });
                 
+                clearButton.addEventListener('touchstart', function(e) {
+                    e.stopPropagation();
+                    clearAllItems(dropZone);
+                }, { passive: false });
+                
                 dropZone.appendChild(clearButton);
             }
         }
@@ -3379,24 +3611,23 @@
             dropZone.style.opacity = '0.7';
             dropZone.style.transition = 'opacity 0.3s';
             
-            // Get all dragged items - check for multiple conditions
+            // Get all dragged items
             const draggedItems = dropZone.querySelectorAll('.drag-item');
             let removedCount = 0;
             
             draggedItems.forEach((item, index) => {
-                // Check for various color formats
+                // Check if it's a dropped item (has success color or is in drop zone)
                 const bgColor = item.style.backgroundColor;
-                const isColoredItem = 
+                const isDroppedItem = 
                     bgColor.includes('var(--success-color)') || 
                     bgColor === 'rgb(46, 204, 113)' ||
                     bgColor === '#2ecc71' ||
                     bgColor === 'rgb(39, 174, 96)' ||
                     bgColor === '#27ae60' ||
                     bgColor === 'rgb(155, 89, 182)' || // Purple for ordering activity
-                    bgColor === '#9b59b6' ||
-                    item.classList.contains('order-item'); // Check for order-item class
+                    bgColor === '#9b59b6';
                 
-                if (isColoredItem) {
+                if (isDroppedItem && item.parentNode === dropZone) {
                     setTimeout(() => {
                         item.style.transform = 'scale(0)';
                         item.style.opacity = '0';
@@ -3448,8 +3679,12 @@
         function setupOrderingActivity() {
             const orderTarget = document.getElementById('orderTarget');
             if (orderTarget) {
-                orderTarget.addEventListener('dragover', allowDrop);
+                orderTarget.removeAttribute('ondragover');
+                orderTarget.removeAttribute('ondrop');
+                orderTarget.addEventListener('dragover', handleDragOver);
                 orderTarget.addEventListener('drop', handleOrderDrop);
+                orderTarget.addEventListener('touchmove', handleTouchMove, { passive: false });
+                orderTarget.addEventListener('touchend', handleTouchEnd);
                 addClearAllButton(orderTarget);
             }
         }
@@ -3460,10 +3695,13 @@
                 const orderTarget = document.getElementById('orderTarget');
                 
                 const orderItem = document.createElement('div');
-                orderItem.className = 'drag-item order-item'; // Added 'order-item' class
+                orderItem.className = 'drag-item order-item';
                 orderItem.textContent = draggedElement.textContent;
                 orderItem.dataset.value = draggedElement.dataset.value;
                 orderItem.style.cssText = 'background-color: #9b59b6; margin: 5px 0; cursor: default;';
+                orderItem.setAttribute('draggable', 'true');
+                orderItem.addEventListener('dragstart', handleDragStart);
+                orderItem.addEventListener('touchstart', handleTouchStart, { passive: false });
                 
                 const clearBtn = orderTarget.querySelector('.clear-all-btn');
                 if (clearBtn) {
@@ -3473,6 +3711,7 @@
                 }
                 
                 draggedElement.classList.remove('dragging');
+                draggedElement.style.opacity = '';
                 draggedElement = null;
             }
         }
@@ -4304,6 +4543,14 @@
                 el.style.display = 'block';
             });
         });
+        
+        // ========== TOUCH SUPPORT FOR MOBILE ==========
+        document.addEventListener('touchstart', function(e) {
+            // Prevent default only for drag items
+            if (e.target.classList.contains('drag-item')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
